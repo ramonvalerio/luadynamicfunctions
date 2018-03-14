@@ -46,7 +46,7 @@ namespace LUADynamicFunctions
             }
 
             watch.Stop();
-            var elapsedMs = watch.Elapsed;
+            TimeResult = watch.Elapsed;
 
             return result;
         }
