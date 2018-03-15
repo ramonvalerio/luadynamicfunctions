@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LUADynamicFunctions
 {
@@ -8,21 +7,22 @@ namespace LUADynamicFunctions
     {
         static void Main(string[] args)
         {
-            var functionA = "FuncaoA";
-            var expressionA = @"if x % 2 then
-                                    return x * 2
-                                else
-                                    return x * 100
-                                end";
+            var data = new List<double>();
 
-            var data = new List<decimal>();
-
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 50; i++)
                 data.Add(i);
+
+            var functionA = "A";
+            var expressionA = @"x * 2";
+
+            var functionB = "B";
+            var expressionB = @"x + 10";
 
             var dynamicFunction = new DynamicFunction();
             dynamicFunction.AddFunction(functionA, expressionA);
-            var result = dynamicFunction.Execute(data);
+            dynamicFunction.AddFunction(functionB, expressionB);
+
+            var result = dynamicFunction.Execute("A + B", data);
 
             for (int i = 0; i < result.Count; i++)
                 Console.WriteLine($"Linha {i}: {result[i]}");
