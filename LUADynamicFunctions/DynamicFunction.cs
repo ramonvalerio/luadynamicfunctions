@@ -8,29 +8,28 @@ namespace LUADynamicFunctions
 {
     public class DynamicFunction
     {
-        private Dictionary<string, string> _functions;
-        public TimeSpan TimeResult { get; set; }
-
-        public DynamicFunction()
-        {
-            _functions = new Dictionary<string, string>();
-        }
+        private Dictionary<string, string> _functions = new Dictionary<string, string>();
+        public TimeSpan TimeResult { get; private set; }
 
         public void AddFunction(string functionName, string expression)
         {
-            var result = $@"function {functionName}(x) return {expression} end";
+            var result = $@"function {functionName}(x)
+                                if x == nil then
+                                    x = 0
+                                end
+                            return {expression}
+                        end";
             _functions.Add(functionName, result);
         }
 
-        public IList<double> Execute(string formula, IEnumerable<double> collection)
+        public IList<double?> Execute(string formula, IEnumerable<double?> collection)
         {
             var watch = Stopwatch.StartNew();
-            var result = new List<double>(collection.Count());
+            var functionsLua = new List<LuaFunction>();
+            var result = new List<double?>(collection.Count());
 
             using (var lua = new Lua())
             {
-                var functionsLua = new List<LuaFunction>();
-
                 foreach (var functionName in _functions.Keys)
                 {
                     lua.DoString(_functions[functionName]);
@@ -39,10 +38,10 @@ namespace LUADynamicFunctions
 
                 foreach (var x in collection)
                 {
-                    double resultAux = x;
+                    double? resultAux = x;
 
                     foreach (var function in functionsLua)
-                        resultAux = Convert.ToDouble(function.Call(resultAux).First());
+                        resultAux = Convert.ToDouble(function.Call(resultAux).FirstOrDefault());
 
                     result.Add(resultAux);
                 }

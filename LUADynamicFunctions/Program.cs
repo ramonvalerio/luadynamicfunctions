@@ -7,10 +7,13 @@ namespace LUADynamicFunctions
     {
         static void Main(string[] args)
         {
-            var data = new List<double>();
+            var data = new List<double?>();
 
             for (int i = 0; i < 50; i++)
                 data.Add(i);
+
+            data.Add(null);
+            data.Add(null);
 
             var functionA = "A";
             var expressionA = @"x * 2";
