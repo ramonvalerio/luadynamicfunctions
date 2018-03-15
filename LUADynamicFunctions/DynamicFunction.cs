@@ -17,9 +17,7 @@ namespace LUADynamicFunctions
         private void AddFunction(string functionName, string expression)
         {
             var result = $@"function {functionName}(x)
-                                if x == nil then
-                                    x = 0
-                                end
+                                if x == nil then x = 0 end
                             return {expression}
                         end";
             _functions.Add(functionName, result);
@@ -34,8 +32,8 @@ namespace LUADynamicFunctions
 
         private void _expression_EvaluateParameter(string name, ParameterArgs args)
         {
+            args.Result = 0; // este valor é ignorado propositalmente
             _formula = _formula.Replace(name, $"{name}(x)");
-            args.Result = 0;
             this.AddFunction(name, FunctionRepository.getFormulaByFunctionName(name));
         }
 
@@ -69,23 +67,14 @@ namespace LUADynamicFunctions
                 functionsLua.Add(lua["Execute"] as LuaFunction);
 
                 foreach (var functionName in _functions.Keys)
-                {
                     lua.DoString(_functions[functionName]);
-                    //functionsLua.Add(lua[functionName] as LuaFunction);
-                }
 
                 foreach (var x in data)
                 {
                     double? resultAux = x;
 
-                    //resultAux = Convert.ToDouble(genericFunction.Call(resultAux).FirstOrDefault());
-
                     foreach (var function in functionsLua)
-                    {
                         resultAux = Convert.ToDouble(function.Call(resultAux).FirstOrDefault());
-                    }
-
-                    //var resultAux2 = lua.DoString(ReplaceParameterValue(_formula, x)).FirstOrDefault();
 
                     result.Add(resultAux);
                 }

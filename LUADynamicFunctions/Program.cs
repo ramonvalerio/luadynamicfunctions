@@ -15,7 +15,6 @@ namespace LUADynamicFunctions
                 data.Add(i);
 
             var formula = "(A + (B + C))";
-            //var formula = "A - B";
 
             var dynamicFunction = new DynamicFunction();
             var result = dynamicFunction.Execute(formula, data);
