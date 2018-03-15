@@ -1,4 +1,5 @@
-﻿using NLua;
+﻿using NCalc;
+using NLua;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,8 +11,10 @@ namespace LUADynamicFunctions
     {
         private Dictionary<string, string> _functions = new Dictionary<string, string>();
         public TimeSpan TimeResult { get; private set; }
+        private Expression _expression;
+        private string _formula;
 
-        public void AddFunction(string functionName, string expression)
+        private void AddFunction(string functionName, string expression)
         {
             var result = $@"function {functionName}(x)
                                 if x == nil then
@@ -22,26 +25,67 @@ namespace LUADynamicFunctions
             _functions.Add(functionName, result);
         }
 
-        public IList<double?> Execute(string formula, IEnumerable<double?> collection)
+        private void IdentifyFunctionsByFormula(string formula)
+        {
+            _expression = new Expression(formula);
+            _expression.EvaluateParameter += _expression_EvaluateParameter;
+            _expression.Evaluate();
+        }
+
+        private void _expression_EvaluateParameter(string name, ParameterArgs args)
+        {
+            _formula = _formula.Replace(name, $"{name}(x)");
+            args.Result = 0;
+            this.AddFunction(name, FunctionRepository.getFormulaByFunctionName(name));
+        }
+
+        private string ReplaceParameterValue(string formula, double? parameterValue)
+        {
+            if (parameterValue == null)
+                return formula.Replace("x", "0");
+            else
+                return formula.Replace("x", parameterValue.ToString());
+        }
+
+        public IList<double?> Execute(string formula, IEnumerable<double?> data)
         {
             var watch = Stopwatch.StartNew();
             var functionsLua = new List<LuaFunction>();
-            var result = new List<double?>(collection.Count());
+            var result = new List<double?>(data.Count());
+
+            _formula = formula;
+
+            IdentifyFunctionsByFormula(formula);
 
             using (var lua = new Lua())
             {
+                var scriptExecuteFunction = $@"function Execute(x)
+                                                return {_formula}
+                                            end";
+
+                _functions.Add("Execute", scriptExecuteFunction);
+
+                lua.DoString(_functions["Execute"]);
+                functionsLua.Add(lua["Execute"] as LuaFunction);
+
                 foreach (var functionName in _functions.Keys)
                 {
                     lua.DoString(_functions[functionName]);
-                    functionsLua.Add(lua[functionName] as LuaFunction);
+                    //functionsLua.Add(lua[functionName] as LuaFunction);
                 }
 
-                foreach (var x in collection)
+                foreach (var x in data)
                 {
                     double? resultAux = x;
 
+                    //resultAux = Convert.ToDouble(genericFunction.Call(resultAux).FirstOrDefault());
+
                     foreach (var function in functionsLua)
+                    {
                         resultAux = Convert.ToDouble(function.Call(resultAux).FirstOrDefault());
+                    }
+
+                    //var resultAux2 = lua.DoString(ReplaceParameterValue(_formula, x)).FirstOrDefault();
 
                     result.Add(resultAux);
                 }

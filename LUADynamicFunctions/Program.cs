@@ -8,24 +8,17 @@ namespace LUADynamicFunctions
         static void Main(string[] args)
         {
             var data = new List<double?>();
+            data.Add(null);
+            data.Add(null);
 
             for (int i = 0; i < 50; i++)
                 data.Add(i);
 
-            data.Add(null);
-            data.Add(null);
-
-            var functionA = "A";
-            var expressionA = @"x * 2";
-
-            var functionB = "B";
-            var expressionB = @"x + 10";
+            var formula = "(A + (B + C))";
+            //var formula = "A - B";
 
             var dynamicFunction = new DynamicFunction();
-            dynamicFunction.AddFunction(functionA, expressionA);
-            dynamicFunction.AddFunction(functionB, expressionB);
-
-            var result = dynamicFunction.Execute("A + B", data);
+            var result = dynamicFunction.Execute(formula, data);
 
             for (int i = 0; i < result.Count; i++)
                 Console.WriteLine($"Linha {i}: {result[i]}");
