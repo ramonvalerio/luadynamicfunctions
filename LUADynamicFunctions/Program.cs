@@ -11,10 +11,10 @@ namespace LUADynamicFunctions
             data.Add(null);
             data.Add(null);
 
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 10; i++) //limite: 10000000
                 data.Add(i);
 
-            var formula = "(A + (B + C))";
+            var formula = "(A * (B + C))";
 
             var dynamicFunction = new DynamicFunction();
             var result = dynamicFunction.Execute(formula, data);
