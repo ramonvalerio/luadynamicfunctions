@@ -2,21 +2,36 @@
 {
     public class FunctionRepository
     {
-        public static string getFormulaByFunctionName(string functionName)
+        public Functor getFormulaByFunctionName(string functionName)
         {
             switch (functionName)
             {
                 case "A":
-                    return "x * 2";
-
+                    {
+                        var functor = new Functor();
+                        functor.Name = functionName;
+                        functor.Expression = "x * 2";
+                        return functor;
+                    }
+                    
                 case "B":
-                    return "x + 2";
-
+                    {
+                        var functor = new Functor();
+                        functor.Name = functionName;
+                        functor.Expression = "x + 2";
+                        return functor;
+                    }
+                    
                 case "C":
-                    return "x + 3";
+                    {
+                        var functor = new Functor();
+                        functor.Name = functionName;
+                        functor.Expression = "x + 3";
+                        return functor;
+                    }
 
                 default:
-                    return string.Empty;
+                    throw new System.Exception("Fóruma com função inexistente.");
             }
         }
     }

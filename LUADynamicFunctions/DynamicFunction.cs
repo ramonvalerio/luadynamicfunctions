@@ -9,18 +9,14 @@ namespace LUADynamicFunctions
 {
     public class DynamicFunction
     {
-        private Dictionary<string, string> _functions = new Dictionary<string, string>();
+        private Dictionary<string, Functor> _functors = new Dictionary<string, Functor>();
         public TimeSpan TimeResult { get; private set; }
         private Expression _expression;
         private string _formula;
 
-        private void AddFunction(string functionName, string expression)
+        private void AddFunction(Functor functor)
         {
-            var result = $@"function {functionName}(x)
-                                if x == nil then x = 0 end
-                            return {expression}
-                        end";
-            _functions.Add(functionName, result);
+            _functors.Add(functor.Name, functor);
         }
 
         private void IdentifyFunctionsByFormula(string formula)
@@ -34,7 +30,10 @@ namespace LUADynamicFunctions
         {
             args.Result = 0; // este valor é ignorado propositalmente
             _formula = _formula.Replace(name, $"{name}(x)");
-            this.AddFunction(name, FunctionRepository.getFormulaByFunctionName(name));
+
+            var functionRepository = new FunctionRepository();
+            var functor = functionRepository.getFormulaByFunctionName(name);
+            this.AddFunction(functor);
         }
 
         private string ReplaceParameterValue(string formula, double? parameterValue)
@@ -57,17 +56,16 @@ namespace LUADynamicFunctions
 
             using (var lua = new Lua())
             {
-                var scriptExecuteFunction = $@"function Execute(x)
-                                                return {_formula}
-                                            end";
+                var functorExecute = new Functor();
+                functorExecute.Name = "Execute";
+                functorExecute.Expression = _formula;
 
-                _functions.Add("Execute", scriptExecuteFunction);
-
-                lua.DoString(_functions["Execute"]);
+                _functors.Add("Execute", functorExecute);
+                lua.DoString(_functors["Execute"].GetScriptFunction());
                 functionsLua.Add(lua["Execute"] as LuaFunction);
 
-                foreach (var functionName in _functions.Keys)
-                    lua.DoString(_functions[functionName]);
+                foreach (var functionName in _functors.Keys)
+                    lua.DoString(_functors[functionName].GetScriptFunction());
 
                 foreach (var x in data)
                 {
