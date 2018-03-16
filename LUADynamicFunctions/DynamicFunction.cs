@@ -37,12 +37,12 @@ namespace LUADynamicFunctions
                 foreach (var functionName in _functors.Keys)
                     lua.DoString(_functors[functionName].GetScriptFunction());
 
-                foreach (var x in data)
+                foreach (var x in data.AsParallel())
                 {
                     double? resultAux = x;
 
                     foreach (var function in functionsLua)
-                        resultAux = Convert.ToDouble(function.Call(resultAux).FirstOrDefault());
+                        resultAux = Convert.ToDouble(function.Call(resultAux,0,0).First());
 
                     result.Add(resultAux);
                 }
@@ -69,7 +69,7 @@ namespace LUADynamicFunctions
         private void _expression_EvaluateParameter(string name, ParameterArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
-            _formula = _formula.Replace(name, $"{name}(x)");
+            _formula = _formula.Replace(name, $"{name}(x{_functors.Count})");
 
             var functionRepository = new FunctionRepository();
             var functor = functionRepository.getFormulaByFunctionName(name);
