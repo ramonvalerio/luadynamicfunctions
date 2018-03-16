@@ -14,36 +14,6 @@ namespace LUADynamicFunctions
         private Expression _expression;
         private string _formula;
 
-        private void AddFunction(Functor functor)
-        {
-            _functors.Add(functor.Name, functor);
-        }
-
-        private void IdentifyFunctionsByFormula(string formula)
-        {
-            _expression = new Expression(formula);
-            _expression.EvaluateParameter += _expression_EvaluateParameter;
-            _expression.Evaluate();
-        }
-
-        private void _expression_EvaluateParameter(string name, ParameterArgs args)
-        {
-            args.Result = 0; // este valor é ignorado propositalmente
-            _formula = _formula.Replace(name, $"{name}(x)");
-
-            var functionRepository = new FunctionRepository();
-            var functor = functionRepository.getFormulaByFunctionName(name);
-            this.AddFunction(functor);
-        }
-
-        private string ReplaceParameterValue(string formula, double? parameterValue)
-        {
-            if (parameterValue == null)
-                return formula.Replace("x", "0");
-            else
-                return formula.Replace("x", parameterValue.ToString());
-        }
-
         public IList<double?> Execute(string formula, IEnumerable<double?> data)
         {
             var watch = Stopwatch.StartNew();
@@ -82,6 +52,36 @@ namespace LUADynamicFunctions
             TimeResult = watch.Elapsed;
 
             return result;
+        }
+
+        private void AddFunction(Functor functor)
+        {
+            _functors.Add(functor.Name, functor);
+        }
+
+        private void IdentifyFunctionsByFormula(string formula)
+        {
+            _expression = new Expression(formula);
+            _expression.EvaluateParameter += _expression_EvaluateParameter;
+            _expression.Evaluate();
+        }
+
+        private void _expression_EvaluateParameter(string name, ParameterArgs args)
+        {
+            args.Result = 0; // este valor é ignorado propositalmente
+            _formula = _formula.Replace(name, $"{name}(x)");
+
+            var functionRepository = new FunctionRepository();
+            var functor = functionRepository.getFormulaByFunctionName(name);
+            this.AddFunction(functor);
+        }
+
+        private string ReplaceParameterValue(string formula, double? parameterValue)
+        {
+            if (parameterValue == null)
+                return formula.Replace("x", "0");
+            else
+                return formula.Replace("x", parameterValue.ToString());
         }
     }
 }
