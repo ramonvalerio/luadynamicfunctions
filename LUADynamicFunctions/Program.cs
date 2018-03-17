@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace LUADynamicFunctions
 {
@@ -7,17 +6,8 @@ namespace LUADynamicFunctions
     {
         static void Main(string[] args)
         {
-            var data = new List<double?>();
-            data.Add(null);
-            data.Add(null);
-
-            for (int i = 0; i < 10; i++) //limite: 10000000
-                data.Add(i);
-
-            var formula = "(A * (B + C))";
-
             var dynamicFunction = new DynamicFunction();
-            var result = dynamicFunction.Execute(formula, data);
+            var result = dynamicFunction.Execute("A + (B + C)");
 
             for (int i = 0; i < result.Count; i++)
                 Console.WriteLine($"Linha {i}: {result[i]}");

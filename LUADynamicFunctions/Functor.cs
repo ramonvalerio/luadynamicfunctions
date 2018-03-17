@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace LUADynamicFunctions
 {
@@ -6,26 +7,63 @@ namespace LUADynamicFunctions
     {
         public string Name { get; set; }
         public string Expression { get; set; }
-        public List<double?> Data { get; set; }
+        public List<Data> Values { get; private set; }
 
         public Functor()
         {
-            Data = new List<double?>();
-            Data.Add(null);
-            Data.Add(null);
+            Values = new List<Data>();
 
-            for (int i = 0; i < 50; i++)
-                Data.Add(i);
+            for (int i = 1; i < 50; i++)
+                Values.Add(new Data(DateTime.Now, (double)i));
         }
 
-        public string GetScriptFunction()
+        public string GetScriptFunction(params string[] parameters)
         {
-            var result = $@"function {this.Name}(x)
-                                if x == nil then x = 0 end
-                            return {this.Expression}
-                        end";
+            string parametersResult = string.Empty;
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                if (i == (parameters.Length - 1))
+                {
+                    parametersResult += $"{parameters[i]}";
+                }
+                else
+                {
+                    parametersResult += $"{parameters[i]}, ";
+                }
+            }
+
+            //var result = $@"function {this.Name}({parametersResult})
+            //                    if x == nil then x = 0 end
+            //                return {this.Expression}
+            //            end";
+
+            var result = $@"function {this.Name}({parametersResult})
+                                result =  {this.Expression}
+                                if result == nil then
+                                    return 0
+                                end
+                                return result
+                            end";
 
             return result;
+        }
+
+        public void AddData(DateTime date, double? value)
+        {
+            Values.Add(new Data(date, value));
+        }
+    }
+
+    public class Data
+    {
+        public DateTime Date { get; private set; }
+        public double? Value { get; private set; }
+
+        public Data(DateTime date, double? value)
+        {
+            Date = date;
+            Value = value;
         }
     }
 }
