@@ -17,7 +17,6 @@ namespace LUADynamicFunctions
         public IList<double?> Execute(string formula)
         {
             var watch = Stopwatch.StartNew();
-            var functionsLua = new List<LuaFunction>();
 
             _formula = $"({formula})";
 
@@ -30,23 +29,21 @@ namespace LUADynamicFunctions
                 for (int i = 0; i < _functors.Count; i++)
                     parametersExecuteFunction[i] = $"x{i}";
 
+                // Set Function Execute
                 var functorExecute = new Functor();
                 functorExecute.Name = "Execute";
                 functorExecute.Expression = _formula;
-                _functors.Add("Execute", functorExecute);
+                lua.DoString(functorExecute.GetScriptFunction(parametersExecuteFunction));
+                var execute = lua["Execute"] as LuaFunction;
 
-                lua.DoString(_functors["Execute"].GetScriptFunction(parametersExecuteFunction)); // parametros
-                functionsLua.Add(lua["Execute"] as LuaFunction);
-
+                // Set All other Function
                 foreach (var functionName in _functors.Keys)
-                {
-                    lua.DoString(_functors[functionName].GetScriptFunction());
-                }
+                    lua.DoString(_functors[functionName].GetScriptFunction("x"));
 
-                int maxLength = 50;
+                int maxLength = 49;
                 var result = new List<double?>(maxLength);
 
-                double?[] parameters = new double?[_functors.Count - 1];
+                double?[] parameters = new double?[_functors.Count];
 
                 for (int i = 0; i < maxLength; i++)
                 {
@@ -62,10 +59,17 @@ namespace LUADynamicFunctions
                         indexParameter++;
                     }
 
-                    //var resultFunction = Convert.ToDouble(functionsLua[0].Call(parameters).First());
-                    var resultFunction = Convert.ToDouble(functionsLua[0].Call(parameters[0], parameters[1], parameters[2]).FirstOrDefault());
+                    //var resultFunction = execute.Call(parameters).FirstOrDefault();
+                    var resultFunction = execute.Call(parameters[0], parameters[1], parameters[2]).FirstOrDefault();
 
-                    result.Add(resultFunction);
+                    if (resultFunction == null)
+                    {
+                        result.Add(null);
+                    }
+                    else
+                    {
+                        result.Add(Convert.ToDouble(resultFunction));
+                    }
                 }
 
                 watch.Stop();
