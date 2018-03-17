@@ -1,18 +1,22 @@
-﻿using NCalc;
+﻿using DynaFunction.Domain.Model;
+using DynaFunction.Repository;
+using NCalc;
 using NLua;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 
-namespace LUADynamicFunctions
+namespace DynaFunction.Application
 {
-    public class DynamicFunction : IDynamicFunction
+    public class DynaFunction : IDynaFunction
     {
         public TimeSpan TimeResult { get; private set; }
         private Dictionary<string, Functor> _functors = new Dictionary<string, Functor>();
+        private Dictionary<string, Constant> _constants = new Dictionary<string, Constant>();
         private FunctionRepository _functionRepository = new FunctionRepository();
-        private Expression _expression;
+        private ConstantRepository _constantRepository = new ConstantRepository();
         private string _formula;
 
         public IList<double?> Execute(string formula)
@@ -27,12 +31,17 @@ namespace LUADynamicFunctions
             {
                 string[] parametersExecuteFunction = new string[_functors.Count];
 
+                // Create parameters
                 for (int i = 0; i < _functors.Count; i++)
                     parametersExecuteFunction[i] = $"x{i}";
 
-                // Set All other Function
-                foreach (var functionName in _functors.Keys)
-                    lua.DoString(_functors[functionName].GetScriptFunction("x"));
+                // Declare constants
+                foreach (var name in _constants.Keys)
+                    _constants[name].CreateGlobalConstantValue(lua);
+
+                // Declare functions
+                foreach (var name in _functors.Keys)
+                    lua.DoString(_functors[name].GetScriptFunction("x"));
 
                 int maxLength = 49;
                 var result = new List<double?>(maxLength);
@@ -48,7 +57,7 @@ namespace LUADynamicFunctions
                         if (functionName == "Execute")
                             continue;
 
-                        var param = _functors[functionName].Values[i]?.Value;
+                        var param = _functors[functionName].Data.Values[i].Value;
                         parameters[indexParameter] = param;
                         indexParameter++;
                     }
@@ -112,25 +121,63 @@ namespace LUADynamicFunctions
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
-        private void AddFunction(Functor functor)
+        public void AddFunction(Functor functor)
         {
-            _functors.Add(functor.Name, functor);
+            if (!_functors.ContainsKey(functor.Name))
+                _functors.Add(functor.Name, functor);
+        }
+
+        private void AddConstant(Constant constant)
+        {
+            if (!_constants.ContainsKey(constant.Name))
+                _constants.Add(constant.Name, constant);
         }
 
         private void IdentifyFunctionsByFormula(string formula)
         {
-            _expression = new Expression(formula);
-            _expression.EvaluateParameter += _expression_EvaluateParameter;
-            _expression.Evaluate();
+            var expression = new Expression(formula);
+            expression.EvaluateParameter += symbols_EvaluateParameter;
+            expression.Evaluate();
         }
 
-        private void _expression_EvaluateParameter(string name, ParameterArgs args)
+        private void IdentifyFunctionsByExpression(string formula)
+        {
+            var expression = new Expression(formula);
+            expression.EvaluateFunction += expression_EvaluateFunction;
+            expression.EvaluateParameter += expression_EvaluateParameter;
+            expression.Evaluate();
+        }
+
+        private void symbols_EvaluateParameter(string name, ParameterArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
             _formula = _formula.Replace(name, $"{name}(x{_functors.Count})");
 
-            var functor = _functionRepository.getFormulaByFunctionName(name);
+            var functor = _functionRepository.getFunctorByName(name);
+            IdentifyFunctionsByExpression(functor.Expression);
             this.AddFunction(functor);
+        }
+
+        private void expression_EvaluateParameter(string name, ParameterArgs args)
+        {
+            args.Result = 0; // este valor é ignorado propositalmente
+        }
+
+        private void expression_EvaluateFunction(string name, FunctionArgs args)
+        {
+            args.Result = 0; // este valor é ignorado propositalmente
+            var constant = _constantRepository.getConstantByName(name);
+            AddConstant(constant);
+        }
+
+        public DataTable GetData()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetData(DataTable dataTable)
+        {
+            throw new NotImplementedException();
         }
     }
 }
