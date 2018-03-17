@@ -33,11 +33,6 @@ namespace LUADynamicFunctions
                 }
             }
 
-            //var result = $@"function {this.Name}({parametersResult})
-            //                    if x == nil then x = 0 end
-            //                return {this.Expression}
-            //            end";
-
             var result = $@"function {this.Name}({parametersResult})
                                 result =  {this.Expression}
                                 if result == nil then
