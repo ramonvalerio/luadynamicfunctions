@@ -13,7 +13,7 @@ namespace DynaFunction.Domain.Model
 
         public Data()
         {
-            //Values = new Tuple<DateTime, double?>(DateTime.Now, null);
+            Values = new List<double?>();
         }
 
         public void AddData(DateTime date, double? value)
@@ -21,7 +21,7 @@ namespace DynaFunction.Domain.Model
             if (IsDataCommited)
                 return;
 
-            //Add(new Data(date, value));
+            Values.Add(value);
         }
 
         /// <summary>

@@ -18,6 +18,12 @@ namespace DynaFunction.Application
         private FunctionRepository _functionRepository = new FunctionRepository();
         private ConstantRepository _constantRepository = new ConstantRepository();
         private string _formula;
+        private List<Data> _data;
+
+        public DynaFunction()
+        {
+            _data = new List<Data>();
+        }
 
         public IList<double?> Execute(string formula)
         {
@@ -48,6 +54,7 @@ namespace DynaFunction.Application
 
                 double?[] parameters = new double?[_functors.Count];
 
+
                 for (int i = 0; i < maxLength; i++)
                 {
                     var indexParameter = 0;
@@ -77,6 +84,13 @@ namespace DynaFunction.Application
 
                 return result;
             }
+        }
+
+        private Data getData()
+        {
+
+
+            return null;
         }
 
         private double? execute(LuaFunction luaFunction, params double?[] parameters)
@@ -121,7 +135,7 @@ namespace DynaFunction.Application
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
-        public void AddFunction(Functor functor)
+        private void AddFunction(Functor functor)
         {
             if (!_functors.ContainsKey(functor.Name))
                 _functors.Add(functor.Name, functor);
@@ -166,8 +180,8 @@ namespace DynaFunction.Application
         private void expression_EvaluateFunction(string name, FunctionArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
-            var constant = _constantRepository.getConstantByName(name);
-            AddConstant(constant);
+            var functor = _functionRepository.getFunctorByName(name);
+            AddFunction(functor);
         }
 
         public DataTable GetData()
@@ -176,6 +190,11 @@ namespace DynaFunction.Application
         }
 
         public void SetData(DataTable dataTable)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDynaFunction.AddFunction(Functor functor)
         {
             throw new NotImplementedException();
         }

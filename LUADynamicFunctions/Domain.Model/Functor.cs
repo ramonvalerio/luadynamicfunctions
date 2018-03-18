@@ -1,4 +1,6 @@
-﻿namespace DynaFunction.Domain.Model
+﻿using System;
+
+namespace DynaFunction.Domain.Model
 {
     public class Functor
     {
@@ -9,6 +11,9 @@
         public Functor()
         {
             Data = new Data();
+
+            for (int i = 1; i < 50; i++)
+                Data.AddData(DateTime.Now, (double)i);
         }
 
         public string GetScriptFunction(params string[] parameters)
