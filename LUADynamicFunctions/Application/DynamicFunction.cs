@@ -4,13 +4,12 @@ using NCalc;
 using NLua;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 
 namespace DynaFunction.Application
 {
-    public class DynaFunction : IDynaFunction
+    public class DynaFunction : IDynaFunction, IDisposable
     {
         public TimeSpan TimeResult { get; private set; }
         private Dictionary<string, Functor> _functors = new Dictionary<string, Functor>();
@@ -19,6 +18,7 @@ namespace DynaFunction.Application
         private ConstantRepository _constantRepository = new ConstantRepository();
         private string _formula;
         private List<Data> _data;
+        private Lua _lua;
 
         public DynaFunction()
         {
@@ -29,68 +29,59 @@ namespace DynaFunction.Application
         {
             var watch = Stopwatch.StartNew();
 
+            _lua = new Lua();
+
             _formula = $"({formula})";
 
             IdentifyFunctionsByFormula(formula);
 
-            using (var lua = new Lua())
+            string[] parametersExecuteFunction = new string[_functors.Count];
+
+            // Create parameters
+            for (int i = 0; i < _functors.Count; i++)
+                parametersExecuteFunction[i] = $"x{i}";
+
+            // Declare constants
+            foreach (var name in _constants.Keys)
+                _constants[name].CreateGlobalConstantValue(_lua);
+
+            // Declare functions
+            foreach (var name in _functors.Keys)
+                _lua.DoString(_functors[name].GetScriptFunction("x"));
+
+            int maxLength = 1000000;
+            var result = new List<double?>(maxLength);
+
+            double?[] parameters = new double?[_functors.Count];
+
+            for (int i = 0; i < maxLength; i++)
             {
-                string[] parametersExecuteFunction = new string[_functors.Count];
+                var indexParameter = 0;
 
-                // Create parameters
-                for (int i = 0; i < _functors.Count; i++)
-                    parametersExecuteFunction[i] = $"x{i}";
-
-                // Declare constants
-                foreach (var name in _constants.Keys)
-                    _constants[name].CreateGlobalConstantValue(lua);
-
-                // Declare functions
-                foreach (var name in _functors.Keys)
-                    lua.DoString(_functors[name].GetScriptFunction("x"));
-
-                int maxLength = 49;
-                var result = new List<double?>(maxLength);
-
-                double?[] parameters = new double?[_functors.Count];
-
-
-                for (int i = 0; i < maxLength; i++)
+                foreach (var functionName in _functors.Keys)
                 {
-                    var indexParameter = 0;
+                    if (functionName == "Execute")
+                        continue;
 
-                    foreach (var functionName in _functors.Keys)
-                    {
-                        if (functionName == "Execute")
-                            continue;
-
-                        var param = _functors[functionName].Data.Values[i].Value;
-                        parameters[indexParameter] = param;
-                        indexParameter++;
-                    }
-
-                    // Set Function Execute
-                    var functorExecute = new Functor();
-                    functorExecute.Name = "Execute";
-                    functorExecute.Expression = _formula;
-                    lua.DoString(functorExecute.GetScriptFunction(parametersExecuteFunction));
-                    var mainFunction = lua["Execute"] as LuaFunction;
-
-                    result.Add(execute(mainFunction, parameters));
+                    var param = _functors[functionName].Data.Values[i].Value;
+                    parameters[indexParameter] = param;
+                    indexParameter++;
                 }
 
-                watch.Stop();
-                TimeResult = watch.Elapsed;
+                // Set Function Execute
+                var functorExecute = new Functor();
+                functorExecute.Name = "Execute";
+                functorExecute.Expression = _formula;
+                _lua.DoString(functorExecute.GetScriptFunction(parametersExecuteFunction));
+                var mainFunction = _lua["Execute"] as LuaFunction;
 
-                return result;
+                result.Add(execute(mainFunction, parameters));
             }
-        }
 
-        private Data getData()
-        {
+            watch.Stop();
+            TimeResult = watch.Elapsed;
 
-
-            return null;
+            return result;
         }
 
         private double? execute(LuaFunction luaFunction, params double?[] parameters)
@@ -168,8 +159,18 @@ namespace DynaFunction.Application
             _formula = _formula.Replace(name, $"{name}(x{_functors.Count})");
 
             var functor = _functionRepository.getFunctorByName(name);
-            IdentifyFunctionsByExpression(functor.Expression);
             this.AddFunction(functor);
+
+            IdentifyFunctionsByExpression(functor.Expression);
+        }
+
+        private void expression_EvaluateFunction(string name, FunctionArgs args)
+        {
+            args.Result = 0; // este valor é ignorado propositalmente
+            var functor = _functionRepository.getFunctorByName(name);
+            _lua.DoString(functor.GetScriptFunction("x"));
+
+            IdentifyFunctionsByExpression(args.Parameters[0].ParsedExpression.ToString());
         }
 
         private void expression_EvaluateParameter(string name, ParameterArgs args)
@@ -177,26 +178,16 @@ namespace DynaFunction.Application
             args.Result = 0; // este valor é ignorado propositalmente
         }
 
-        private void expression_EvaluateFunction(string name, FunctionArgs args)
+        public void Dispose()
         {
-            args.Result = 0; // este valor é ignorado propositalmente
-            var functor = _functionRepository.getFunctorByName(name);
-            AddFunction(functor);
-        }
+            if (_lua != null)
+                _lua.Dispose();
 
-        public DataTable GetData()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetData(DataTable dataTable)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDynaFunction.AddFunction(Functor functor)
-        {
-            throw new NotImplementedException();
+            TimeResult = TimeSpan.MinValue;
+            _functors.Clear();
+            _constants.Clear();
+            _formula = string.Empty;
+            _data.Clear();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace DynaFunction.Domain.Model
     {
         public string Name { get; set; }
         public string Expression { get; set; }
-        public Data Data { get; private set; }
+        public Data Data { get; set; }
 
         public Functor()
         {

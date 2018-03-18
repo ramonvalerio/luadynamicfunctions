@@ -1,6 +1,6 @@
 ﻿using DynaFunction.Domain.Model;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DynaFunction.Repository
 {
@@ -12,42 +12,43 @@ namespace DynaFunction.Repository
         {
             _functors = new Dictionary<string, Functor>();
 
+            var data = new Data();
             var values = new List<double?>();
 
-            for (int i = 1; i < 50; i++)
+            for (int i = 0; i < 1000000; i++)
             {
-                values.Add((double)i);
+                data.AddData(DateTime.Now, (double)i);
             }
 
             var functor0 = new Functor();
             functor0.Name = "A";
-            functor0.Expression = "Multiple10(x * 2)";
-            functor0.Data.Values = values;
+            functor0.Expression = "Multiple50(Multiple100(Multiple10(x * 2)))";
+            functor0.Data = data;
 
             var functor1 = new Functor();
             functor1.Name = "B";
             functor1.Expression = "Multiple10(x + 2)";
-            functor0.Data.Values = values;
+            functor1.Data = data;
 
             var functor2 = new Functor();
             functor2.Name = "C";
             functor2.Expression = "Multiple10(x + 3)";
-            functor0.Data.Values = values;
+            functor2.Data = data;
 
             var functor3 = new Functor();
             functor3.Name = "Multiple10";
             functor3.Expression = "(x * 10)";
-            functor0.Data.Values = values;
+            functor3.Data = data;
 
             var functor4 = new Functor();
             functor4.Name = "Multiple50";
             functor4.Expression = "(x * 50)";
-            functor0.Data.Values = values;
+            functor4.Data = data;
 
             var functor5 = new Functor();
             functor5.Name = "Multiple100";
             functor5.Expression = "(x * 100)";
-            functor0.Data.Values = values;
+            functor5.Data = data;
 
             _functors.Add(functor0.Name, functor0);
             _functors.Add(functor1.Name, functor1);
