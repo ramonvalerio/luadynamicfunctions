@@ -1,51 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 
 namespace DynaFunction.Domain.Model
 {
     public class Data
     {
-        public List<DateTime> X { get; set; }
-        public List<double?> Y { get; set; }
+        public List<dynamic> X { get; private set; }
+        public List<dynamic> Y { get; private set; }
 
         public Data()
         {
-            X = new List<DateTime>();
-            Y = new List<double?>();
+            X = new List<dynamic>();
+            Y = new List<dynamic>();
         }
 
-        public void AddData(DateTime date, double? value)
+        public void AddData(dynamic date, dynamic value)
         {
             X.Add(date);
             Y.Add(value);
         }
 
         /// <summary>
-        /// É necessário uma coluna com nome DATE
-        /// É necessário uma coluna com nome VALUE
+        /// É necessário uma coluna com nome X
+        /// É necessário uma coluna com nome Y
         /// </summary>
         /// <param name="dataTable"></param>
         public void InsertData(DataTable dt)
         {
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                var date = Convert.ToDateTime(dt.Rows[i]["DATE"]);
-                var value = Convert.ToDouble(dt.Rows[i]["VALUE"]);
-
-                X.Add(date);
-                Y.Add(value);
+                X.Add(dt.Rows[i]["X"]);
+                Y.Add(dt.Rows[i]["Y"]);
             }
-        }
-
-        public void RollByDate()
-        {
-            //Values = Values.OrderBy(x => x.Date).ToList();
-        }
-
-        public void RollByValue()
-        {
-            //Values = Values.OrderBy(x => x.Value).ToList();
         }
     }
 }

@@ -56,13 +56,13 @@ namespace DynaFunction.Application
 
                 foreach (var functionName in _functors.Keys) // Temporário
                 {
-                    _data.X.Add(_functors[functionName].Data.X[i].Date);
+                    _data.X.Add(_functors[functionName].Data.X[i]);
                     break;
                 }
 
                 foreach (var functionName in _functors.Keys)
                 {
-                    var value = _functors[functionName].Data.Y[i].Value;
+                    var value = _functors[functionName].Data.Y[i];
 
                     parameters[indexParameter] = value;
                     indexParameter++;
@@ -79,16 +79,6 @@ namespace DynaFunction.Application
             TimeResult = watch.Elapsed;
 
             return _data;
-        }
-
-        public void AddScript(string script)
-        {
-            _lua.DoString(script);
-        }
-
-        public void AddFileScript(string fileName)
-        {
-            _lua.DoFile(fileName);
         }
 
         private double? execute(LuaFunction luaFunction, params double?[] parameters)
@@ -178,6 +168,16 @@ namespace DynaFunction.Application
         private void expression_EvaluateParameter(string name, ParameterArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
+        }
+
+        public void AddScript(string script)
+        {
+            _lua.DoString(script);
+        }
+
+        public void AddFileScript(string fileName)
+        {
+            _lua.DoFile(fileName);
         }
 
         public void Dispose()
