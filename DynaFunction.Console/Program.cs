@@ -10,7 +10,7 @@ namespace DynaFunction.Core
         {
             var data = new Data();
 
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 1000000; i++)
                 data.AddData(DateTime.Now.AddDays(i), (double)i);
 
             DynaFunction.AddFunctor(new Functor("A", "Multiple50(Multiple100(Multiple10(x * 2)))", data));
@@ -25,20 +25,29 @@ namespace DynaFunction.Core
                 // Result 1
                 var result = dynaFunction.Execute("A * (B + C) / 500");
 
-                for (int i = 0; i < result.Y.Count; i++)
-                    Console.WriteLine($"X:{result.X[i].ToString("dd/MM/yyyy")} Y:{result.Y[i]}");
+                //for (int i = 0; i < result.Y.Count; i++)
+                //    Console.WriteLine($"X:{result.X[i].ToString("dd/MM/yyyy")} Y:{result.Y[i]}");
 
-                Console.WriteLine(JsonConvert.SerializeObject(result));
+                //Console.WriteLine(JsonConvert.SerializeObject(result));
                 Console.WriteLine($"Time Result 1: {dynaFunction.TimeResult.TotalSeconds}");
 
                 // Result 2
-                var result2 = dynaFunction.Execute("A * B");
+                var result2 = dynaFunction.Execute("A * (B + C) / 500");
 
-                for (int i = 0; i < result2.Y.Count; i++)
-                    Console.WriteLine($"X:{result2.X[i].ToString("dd/MM/yyyy")} Y:{result2.Y[i]}");
+                //for (int i = 0; i < result2.Y.Count; i++)
+                //    Console.WriteLine($"X:{result2.X[i].ToString("dd/MM/yyyy")} Y:{result2.Y[i]}");
 
-                Console.WriteLine(JsonConvert.SerializeObject(result2));
+                //Console.WriteLine(JsonConvert.SerializeObject(result2));
                 Console.WriteLine($"Time Result 2: {dynaFunction.TimeResult.TotalSeconds}");
+
+                var result3 = dynaFunction.Execute("A * (B + C) / 500");
+                Console.WriteLine($"Time Result 3: {dynaFunction.TimeResult.TotalSeconds}");
+
+                var result4 = dynaFunction.Execute("A * (B + C) / 500");
+                Console.WriteLine($"Time Result 4: {dynaFunction.TimeResult.TotalSeconds}");
+
+                var result5 = dynaFunction.Execute("A * (B + C) / 500");
+                Console.WriteLine($"Time Result 5: {dynaFunction.TimeResult.TotalSeconds}");
 
                 Console.ReadKey();
             }

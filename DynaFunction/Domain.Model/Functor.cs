@@ -12,11 +12,7 @@ namespace DynaFunction.Domain.Model
         {
             Name = name;
             Expression = expression;
-
             Data = new Data();
-
-            for (int i = 1; i < 1000; i++)
-                Data.AddData(DateTime.Now, (double)i);
         }
 
         public Functor(string name, string expression, Data data)

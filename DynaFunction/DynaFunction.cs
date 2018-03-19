@@ -5,7 +5,6 @@ using NLua;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace DynaFunction
 {
@@ -53,9 +52,9 @@ namespace DynaFunction
             foreach (var name in _functors.Keys)
                 _lua.DoString(_functors[name].GetScriptFunction("x"));
 
-            double?[] parameters = new double?[_functors.Count];
+            dynamic[] parameters = new dynamic[_functors.Count];
 
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < 1000000; i++)
             {
                 var indexParameter = 0;
 
@@ -86,7 +85,7 @@ namespace DynaFunction
             return _data;
         }
 
-        private dynamic execute(LuaFunction luaFunction, params double?[] parameters)
+        private dynamic execute(LuaFunction luaFunction, params dynamic[] parameters)
         {
             if (parameters.Length > 6)
                 throw new Exception("Só é permitido no máximo 6 funções na fórmula.");
@@ -94,27 +93,27 @@ namespace DynaFunction
             object result = null;
 
             if (parameters.Length == 0)
-                result = luaFunction.Call().FirstOrDefault();
+                result = luaFunction.Call()[0];
 
             if (parameters.Length == 1)
-                result = luaFunction.Call(parameters[0]).FirstOrDefault();
+                result = luaFunction.Call(parameters[0])[0];
 
             if (parameters.Length == 2)
-                result = luaFunction.Call(parameters[0], parameters[1]).FirstOrDefault();
+                result = luaFunction.Call(parameters[0], parameters[1])[0];
 
             if (parameters.Length == 3)
-                result = luaFunction.Call(parameters[0], parameters[1], parameters[2]).FirstOrDefault();
+                result = luaFunction.Call(parameters[0], parameters[1], parameters[2])[0];
 
             if (parameters.Length == 4)
-                result = luaFunction.Call(parameters[0], parameters[1], parameters[2], parameters[3]).FirstOrDefault();
+                result = luaFunction.Call(parameters[0], parameters[1], parameters[2], parameters[3])[0];
 
             if (parameters.Length == 5)
-                result = luaFunction.Call(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4]).FirstOrDefault();
+                result = luaFunction.Call(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4])[0];
 
             if (parameters.Length == 6)
             {
                 result = luaFunction.Call(parameters[0], parameters[1], parameters[2],
-                    parameters[3], parameters[4], parameters[5]).FirstOrDefault();
+                    parameters[3], parameters[4], parameters[5])[0];
             }
 
             if (result == null)
