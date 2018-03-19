@@ -15,7 +15,7 @@ namespace DynaFunction.Repository
             var data = new Data();
             var values = new List<double?>();
 
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 100; i++)
             {
                 data.AddData(DateTime.Now.AddDays(i), (double)i);
             }

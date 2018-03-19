@@ -50,7 +50,7 @@ namespace DynaFunction.Application
 
             double?[] parameters = new double?[_functors.Count];
 
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 100; i++)
             {
                 var indexParameter = 0;
 

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DynaFunction")]
+[assembly: AssemblyTitle("LUADynaFunction")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DynaFunction")]
+[assembly: AssemblyProduct("LUADynaFunction")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("88ff6309-c48a-43b9-84b2-0011e0ab9f27")]
+[assembly: Guid("8c4ff368-fa37-496a-8f21-5b5e12f6f4dc")]
 
 // Version information for an assembly consists of the following four values:
 //
