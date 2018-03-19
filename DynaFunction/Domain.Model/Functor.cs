@@ -8,11 +8,14 @@ namespace DynaFunction.Domain.Model
         public string Expression { get; set; }
         public Data Data { get; set; }
 
-        public Functor()
+        public Functor(string name, string expression)
         {
+            Name = name;
+            Expression = expression;
+
             Data = new Data();
 
-            for (int i = 1; i < 50; i++)
+            for (int i = 1; i < 1000; i++)
                 Data.AddData(DateTime.Now, (double)i);
         }
 

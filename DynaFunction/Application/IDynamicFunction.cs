@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using DynaFunction.Domain.Model;
 
 namespace DynaFunction.Application
 {
     public interface IDynaFunction
     {
-        IList<double?> Execute(string formula);
+        Data Execute(string formula);
 
         void AddScript(string script);
 

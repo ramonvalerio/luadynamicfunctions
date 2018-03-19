@@ -17,22 +17,22 @@ namespace DynaFunction.Application
         private FunctionRepository _functionRepository = new FunctionRepository();
         private ConstantRepository _constantRepository = new ConstantRepository();
         private string _formula;
-        private List<Data> _data;
+        private Data _data;
         private Lua _lua;
 
         public DynaFunction()
         {
             _lua = new Lua();
-            _data = new List<Data>();
+            _data = new Data();
         }
 
-        public IList<double?> Execute(string formula)
+        public Data Execute(string formula)
         {
             var watch = Stopwatch.StartNew();
 
             _formula = $"({formula})";
 
-            IdentifyFunctionsByFormula(formula);
+            identifyFunctionsByFormula(formula);
 
             string[] parametersExecuteFunction = new string[_functors.Count];
 
@@ -48,39 +48,37 @@ namespace DynaFunction.Application
             foreach (var name in _functors.Keys)
                 _lua.DoString(_functors[name].GetScriptFunction("x"));
 
-            int maxLength = 1000000;
-            var result = new List<double?>(maxLength);
-
             double?[] parameters = new double?[_functors.Count];
 
-            for (int i = 0; i < maxLength; i++)
+            for (int i = 0; i < 1000000; i++)
             {
                 var indexParameter = 0;
 
+                foreach (var functionName in _functors.Keys) // Temporário
+                {
+                    _data.X.Add(_functors[functionName].Data.X[i].Date);
+                    break;
+                }
+
                 foreach (var functionName in _functors.Keys)
                 {
-                    if (functionName == "Execute")
-                        continue;
+                    var value = _functors[functionName].Data.Y[i].Value;
 
-                    var param = _functors[functionName].Data.Values[i].Value;
-                    parameters[indexParameter] = param;
+                    parameters[indexParameter] = value;
                     indexParameter++;
                 }
 
-                // Set Function Execute
-                var functorExecute = new Functor();
-                functorExecute.Name = "Execute";
-                functorExecute.Expression = _formula;
+                var functorExecute = new Functor("Execute", _formula);
                 _lua.DoString(functorExecute.GetScriptFunction(parametersExecuteFunction));
-                var mainFunction = _lua["Execute"] as LuaFunction;
 
-                result.Add(execute(mainFunction, parameters));
+                var mainFunction = _lua["Execute"] as LuaFunction;
+                _data.Y.Add(execute(mainFunction, parameters));
             }
 
             watch.Stop();
             TimeResult = watch.Elapsed;
 
-            return result;
+            return _data;
         }
 
         public void AddScript(string script)
@@ -130,31 +128,26 @@ namespace DynaFunction.Application
             return Convert.ToDouble(result);
         }
 
-        private static T ConvertValue<T>(string value)
-        {
-            return (T)Convert.ChangeType(value, typeof(T));
-        }
-
-        private void AddFunction(Functor functor)
+        private void addFunction(Functor functor)
         {
             if (!_functors.ContainsKey(functor.Name))
                 _functors.Add(functor.Name, functor);
         }
 
-        private void AddConstant(Constant constant)
+        private void addConstant(Constant constant)
         {
             if (!_constants.ContainsKey(constant.Name))
                 _constants.Add(constant.Name, constant);
         }
 
-        private void IdentifyFunctionsByFormula(string formula)
+        private void identifyFunctionsByFormula(string formula)
         {
             var expression = new Expression(formula);
             expression.EvaluateParameter += symbols_EvaluateParameter;
             expression.Evaluate();
         }
 
-        private void IdentifyFunctionsByExpression(string formula)
+        private void identifyFunctionsByExpression(string formula)
         {
             var expression = new Expression(formula);
             expression.EvaluateFunction += expression_EvaluateFunction;
@@ -168,9 +161,9 @@ namespace DynaFunction.Application
             _formula = _formula.Replace(name, $"{name}(x{_functors.Count})");
 
             var functor = _functionRepository.getFunctorByName(name);
-            this.AddFunction(functor);
+            this.addFunction(functor);
 
-            IdentifyFunctionsByExpression(functor.Expression);
+            identifyFunctionsByExpression(functor.Expression);
         }
 
         private void expression_EvaluateFunction(string name, FunctionArgs args)
@@ -179,7 +172,7 @@ namespace DynaFunction.Application
             var functor = _functionRepository.getFunctorByName(name);
             _lua.DoString(functor.GetScriptFunction("x"));
 
-            IdentifyFunctionsByExpression(args.Parameters[0].ParsedExpression.ToString());
+            identifyFunctionsByExpression(args.Parameters[0].ParsedExpression.ToString());
         }
 
         private void expression_EvaluateParameter(string name, ParameterArgs args)
@@ -196,7 +189,7 @@ namespace DynaFunction.Application
             _functors.Clear();
             _constants.Clear();
             _formula = string.Empty;
-            _data.Clear();
+            _data = new Data();
         }
     }
 }

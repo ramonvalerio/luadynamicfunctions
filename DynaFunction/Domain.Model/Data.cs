@@ -6,22 +6,19 @@ namespace DynaFunction.Domain.Model
 {
     public class Data
     {
-        //public DateTime Date { get; private set; }
-        //public double? Value { get; private set; }
-        public bool IsDataCommited { get; private set; }
-        public List<double?> Values { get; set; }
+        public List<DateTime> X { get; set; }
+        public List<double?> Y { get; set; }
 
         public Data()
         {
-            Values = new List<double?>();
+            X = new List<DateTime>();
+            Y = new List<double?>();
         }
 
         public void AddData(DateTime date, double? value)
         {
-            if (IsDataCommited)
-                return;
-
-            Values.Add(value);
+            X.Add(date);
+            Y.Add(value);
         }
 
         /// <summary>
@@ -31,20 +28,14 @@ namespace DynaFunction.Domain.Model
         /// <param name="dataTable"></param>
         public void InsertData(DataTable dt)
         {
-            if (IsDataCommited)
-                return;
-
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 var date = Convert.ToDateTime(dt.Rows[i]["DATE"]);
                 var value = Convert.ToDouble(dt.Rows[i]["VALUE"]);
-                //Values.Add(new Data(date, value));
-            }
-        }
 
-        public void Commit()
-        {
-            IsDataCommited = true;
+                X.Add(date);
+                Y.Add(value);
+            }
         }
 
         public void RollByDate()

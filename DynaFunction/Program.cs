@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace DynaFunction.Core
 {
@@ -8,28 +9,12 @@ namespace DynaFunction.Core
         {
             using (var dynaFunction = new Application.DynaFunction())
             {
-                //1 - Set Functions
-                //dynaFunction.AddFunction(new Functor { Name = "A", Expression = "x + 2" });
-                //dynaFunction.AddFunction(new Functor { Name = "B", Expression = "x + 10" });
-                //dynaFunction.AddFunction(new Functor { Name = "C", Expression = "x * 2" });
+                var result = dynaFunction.Execute("A * (B + C) / 500");
 
-                //2 - Set Constants
-                ///dynaFunction.AddConstants(new Constant { Name = "PI", Value = 3.1415926535897932 });
+                //var jsonResult = JsonConvert.SerializeObject(result);
 
-                //3 - Commit
-
-
-                //4 - Execute
-                //var result = dynaFunction.Execute("A * (B + C) / 500 + PI");
-
-
-                var formula = "A * (B + C) / 500";
-                //var formula = "A";
-
-                var result = dynaFunction.Execute(formula);
-
-                //for (int i = 0; i < result.Count; i++)
-                    //Console.WriteLine($"Linha {i}: {result[i]}");
+                //for (int i = 0; i < result.Y.Count; i++)
+                //    Console.WriteLine($"Data {result.X[i].ToString("dd/MM/yyyy")} {result.Y[i]}");
 
                 Console.WriteLine($"Time Result: {dynaFunction.TimeResult.TotalSeconds}");
                 Console.ReadKey();

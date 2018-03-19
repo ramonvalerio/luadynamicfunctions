@@ -17,37 +17,25 @@ namespace DynaFunction.Repository
 
             for (int i = 0; i < 1000000; i++)
             {
-                data.AddData(DateTime.Now, (double)i);
+                data.AddData(DateTime.Now.AddDays(i), (double)i);
             }
 
-            var functor0 = new Functor();
-            functor0.Name = "A";
-            functor0.Expression = "Multiple50(Multiple100(Multiple10(x * 2)))";
+            var functor0 = new Functor("A", "Multiple50(Multiple100(Multiple10(x * 2)))");
             functor0.Data = data;
 
-            var functor1 = new Functor();
-            functor1.Name = "B";
-            functor1.Expression = "Multiple10(x + 2)";
+            var functor1 = new Functor("B", "Multiple10(x + 2)");
             functor1.Data = data;
 
-            var functor2 = new Functor();
-            functor2.Name = "C";
-            functor2.Expression = "Multiple10(x + 3)";
+            var functor2 = new Functor("C", "Multiple10(x + 3)");
             functor2.Data = data;
 
-            var functor3 = new Functor();
-            functor3.Name = "Multiple10";
-            functor3.Expression = "(x * 10)";
+            var functor3 = new Functor("Multiple10", "(x * 10)");
             functor3.Data = data;
 
-            var functor4 = new Functor();
-            functor4.Name = "Multiple50";
-            functor4.Expression = "(x * 50)";
+            var functor4 = new Functor("Multiple50", "(x * 50)");
             functor4.Data = data;
 
-            var functor5 = new Functor();
-            functor5.Name = "Multiple100";
-            functor5.Expression = "(x * 100)";
+            var functor5 = new Functor("Multiple100", "(x * 100)");
             functor5.Data = data;
 
             _functors.Add(functor0.Name, functor0);
