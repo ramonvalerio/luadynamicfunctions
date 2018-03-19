@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace DynaFunction.Repository
 {
-    internal class FunctorRepository
+    internal static class FunctorRepository
     {
-        private readonly Dictionary<string, Functor> _functors;
+        private static readonly Dictionary<string, Functor> _functors;
 
-        public FunctorRepository()
+        static FunctorRepository()
         {
             _functors = new Dictionary<string, Functor>();
         }
 
-        public void AddFunctor(Functor functor)
+        public static void AddFunctor(Functor functor)
         {
             if (_functors.ContainsKey(functor.Name))
                 return;
@@ -20,7 +20,7 @@ namespace DynaFunction.Repository
             _functors.Add(functor.Name, functor);
         }
 
-        public Functor getFunctorByName(string name)
+        public static Functor getFunctorByName(string name)
         {
             return _functors[name];
         }

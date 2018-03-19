@@ -10,6 +10,6 @@ namespace DynaFunction
 
         void AddFileScript(string fileName);
 
-        void AddFunctor(Functor functor);
+        //void AddFunctor(Functor functor);
     }
 }

@@ -19,6 +19,13 @@ namespace DynaFunction.Domain.Model
                 Data.AddData(DateTime.Now, (double)i);
         }
 
+        public Functor(string name, string expression, Data data)
+        {
+            Name = name;
+            Expression = expression;
+            Data = data;
+        }
+
         public string GetScriptFunction(params string[] parameters)
         {
             string parametersResult = string.Empty;

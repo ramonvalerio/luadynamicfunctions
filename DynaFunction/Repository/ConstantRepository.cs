@@ -3,9 +3,9 @@ using System;
 
 namespace DynaFunction.Repository
 {
-    internal class ConstantRepository
+    internal static class ConstantRepository
     {
-        public Constant getConstantByName(string name)
+        static Constant getConstantByName(string name)
         {
             switch (name)
             {
