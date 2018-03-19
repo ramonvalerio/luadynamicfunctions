@@ -22,14 +22,13 @@ namespace DynaFunction.Application
 
         public DynaFunction()
         {
+            _lua = new Lua();
             _data = new List<Data>();
         }
 
         public IList<double?> Execute(string formula)
         {
             var watch = Stopwatch.StartNew();
-
-            _lua = new Lua();
 
             _formula = $"({formula})";
 
@@ -82,6 +81,16 @@ namespace DynaFunction.Application
             TimeResult = watch.Elapsed;
 
             return result;
+        }
+
+        public void AddScript(string script)
+        {
+            _lua.DoString(script);
+        }
+
+        public void AddFileScript(string fileName)
+        {
+            _lua.DoFile(fileName);
         }
 
         private double? execute(LuaFunction luaFunction, params double?[] parameters)

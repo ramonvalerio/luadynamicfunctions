@@ -3,38 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynaFunction", "LUADynamicFunctions\DynaFunction.csproj", "{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{F725AEBD-2BE5-451A-9D74-1CCAA532CE51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DynaFunction", "DynaFunction\DynaFunction.csproj", "{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		DebugKopiLua|Any CPU = DebugKopiLua|Any CPU
-		DebugWin|Any CPU = DebugWin|Any CPU
 		Release|Any CPU = Release|Any CPU
-		ReleaseKopiLua|Any CPU = ReleaseKopiLua|Any CPU
-		ReleaseWin|Any CPU = ReleaseWin|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.DebugKopiLua|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.DebugKopiLua|Any CPU.Build.0 = Debug|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.DebugWin|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.DebugWin|Any CPU.Build.0 = Debug|Any CPU
 		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.ReleaseKopiLua|Any CPU.ActiveCfg = Release|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.ReleaseKopiLua|Any CPU.Build.0 = Release|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.ReleaseWin|Any CPU.ActiveCfg = Release|Any CPU
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC}.ReleaseWin|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{8C4FF368-FA37-496A-8F21-5B5E12F6F4DC} = {F725AEBD-2BE5-451A-9D74-1CCAA532CE51}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B62A9B7D-B17F-4F1B-84FE-FF621F366A07}
