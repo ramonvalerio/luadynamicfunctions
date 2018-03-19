@@ -3,7 +3,7 @@ using System;
 
 namespace DynaFunction.Repository
 {
-    public class ConstantRepository
+    internal class ConstantRepository
     {
         public Constant getConstantByName(string name)
         {

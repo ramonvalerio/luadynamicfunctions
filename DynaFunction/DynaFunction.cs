@@ -7,14 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace DynaFunction.Application
+namespace DynaFunction
 {
     public class DynaFunction : IDynaFunction, IDisposable
     {
         public TimeSpan TimeResult { get; private set; }
         private Dictionary<string, Functor> _functors = new Dictionary<string, Functor>();
         private Dictionary<string, Constant> _constants = new Dictionary<string, Constant>();
-        private FunctionRepository _functionRepository = new FunctionRepository();
+        private FunctorRepository _functionRepository = new FunctorRepository();
         private ConstantRepository _constantRepository = new ConstantRepository();
         private string _formula;
         private Data _data;
@@ -81,7 +81,7 @@ namespace DynaFunction.Application
             return _data;
         }
 
-        private double? execute(LuaFunction luaFunction, params double?[] parameters)
+        private dynamic execute(LuaFunction luaFunction, params double?[] parameters)
         {
             if (parameters.Length > 6)
                 throw new Exception("Só é permitido no máximo 6 funções na fórmula.");
@@ -115,7 +115,7 @@ namespace DynaFunction.Application
             if (result == null)
                 return null;
 
-            return Convert.ToDouble(result);
+            return result;
         }
 
         private void addFunction(Functor functor)
@@ -168,6 +168,11 @@ namespace DynaFunction.Application
         private void expression_EvaluateParameter(string name, ParameterArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
+        }
+
+        public void AddFunctor(Functor functor)
+        {
+            _functionRepository.AddFunctor(functor);
         }
 
         public void AddScript(string script)

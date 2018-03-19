@@ -1,6 +1,6 @@
 ﻿using DynaFunction.Domain.Model;
 
-namespace DynaFunction.Application
+namespace DynaFunction
 {
     public interface IDynaFunction
     {
@@ -9,5 +9,7 @@ namespace DynaFunction.Application
         void AddScript(string script);
 
         void AddFileScript(string fileName);
+
+        void AddFunctor(Functor functor);
     }
 }
