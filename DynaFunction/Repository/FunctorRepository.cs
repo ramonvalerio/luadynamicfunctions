@@ -1,7 +1,7 @@
-﻿using DynaFunction.Domain.Model;
+﻿using DynaFunction.Core.Domain.Model;
 using System.Collections.Generic;
 
-namespace DynaFunction.Repository
+namespace DynaFunction.Core.Repository
 {
     internal static class FunctorRepository
     {
@@ -20,7 +20,7 @@ namespace DynaFunction.Repository
             _functors.Add(functor.Name, functor);
         }
 
-        public static Functor getFunctorByName(string name)
+        public static Functor GetFunctorByName(string name)
         {
             return _functors[name];
         }

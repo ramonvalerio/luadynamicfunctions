@@ -56,14 +56,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DynaFunction\DynaFunction.csproj">
+    <ProjectReference Include="..\DynaFunction\DynaFunction.Core.csproj">
       <Project>{88ff6309-c48a-43b9-84b2-0011e0ab9f27}</Project>
-      <Name>DynaFunction</Name>
+      <Name>DynaFunction.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-xcopy /s /y "C:\Users\rvalerio\Documents\Visual Studio 2017\Projects\DynaFunction\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"</PostBuildEvent>
+xcopy /s /y "C:\Users\rvalerio\Documents\Visual Studio 2017\Projects\luadynamicfunctions\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 
-namespace DynaFunction.Domain.Model
+namespace DynaFunction.Core.Domain.Model
 {
     public class Data
     {

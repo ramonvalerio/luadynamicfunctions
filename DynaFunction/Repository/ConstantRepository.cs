@@ -1,7 +1,7 @@
-﻿using DynaFunction.Domain.Model;
+﻿using DynaFunction.Core.Domain.Model;
 using System;
 
-namespace DynaFunction.Repository
+namespace DynaFunction.Core.Repository
 {
     internal static class ConstantRepository
     {

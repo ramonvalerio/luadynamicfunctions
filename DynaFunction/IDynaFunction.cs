@@ -1,15 +1,13 @@
-﻿using DynaFunction.Domain.Model;
+﻿using DynaFunction.Core.Domain.Model;
 
 namespace DynaFunction
 {
     public interface IDynaFunction
     {
-        Data Execute(string formula);
+        Data Execute(Functor functor);
 
         void AddScript(string script);
 
         void AddFileScript(string fileName);
-
-        //void AddFunctor(Functor functor);
     }
 }

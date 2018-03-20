@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DynaFunction.Domain.Model
+﻿namespace DynaFunction.Core.Domain.Model
 {
     public class Functor
     {

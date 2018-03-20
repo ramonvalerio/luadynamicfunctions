@@ -1,5 +1,5 @@
-﻿using DynaFunction.Domain.Model;
-using DynaFunction.Repository;
+﻿using DynaFunction.Core.Domain.Model;
+using DynaFunction.Core.Repository;
 using NCalc;
 using NLua;
 using System;
@@ -26,7 +26,7 @@ namespace DynaFunction
             _data = new Data();
         }
 
-        public Data Execute(string formula)
+        public Data Execute(Functor functor)
         {
             _functors.Clear();
             _constants.Clear();
@@ -34,9 +34,9 @@ namespace DynaFunction
 
             var watch = Stopwatch.StartNew();
 
-            _formula = $"({formula})";
+            _formula = $"({functor.Expression})";
 
-            identifyFunctionsByFormula(formula);
+            identifyFunctionsByFormula(functor.Expression);
 
             string[] parametersExecuteFunction = new string[_functors.Count];
 
@@ -54,7 +54,7 @@ namespace DynaFunction
 
             dynamic[] parameters = new dynamic[_functors.Count];
 
-            for (int i = 0; i < 1000000; i++)
+            for (int i = 0; i < 1; i++)
             {
                 var indexParameter = 0;
 
@@ -125,7 +125,9 @@ namespace DynaFunction
         private void addFunction(Functor functor)
         {
             if (!_functors.ContainsKey(functor.Name))
+            {
                 _functors.Add(functor.Name, functor);
+            }
         }
 
         private void addConstant(Constant constant)
@@ -152,9 +154,13 @@ namespace DynaFunction
         private void symbols_EvaluateParameter(string name, ParameterArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
+
+            if (name.ToUpper() == "X")
+                return;
+
             _formula = _formula.Replace(name, $"{name}(x{_functors.Count})");
 
-            var functor = FunctorRepository.getFunctorByName(name);
+            var functor = FunctorRepository.GetFunctorByName(name);
             this.addFunction(functor);
 
             identifyFunctionsByExpression(functor.Expression);
@@ -163,7 +169,7 @@ namespace DynaFunction
         private void expression_EvaluateFunction(string name, FunctionArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
-            var functor = FunctorRepository.getFunctorByName(name);
+            var functor = FunctorRepository.GetFunctorByName(name);
             _lua.DoString(functor.GetScriptFunction("x"));
 
             identifyFunctionsByExpression(args.Parameters[0].ParsedExpression.ToString());
@@ -172,6 +178,11 @@ namespace DynaFunction
         private void expression_EvaluateParameter(string name, ParameterArgs args)
         {
             args.Result = 0; // este valor é ignorado propositalmente
+        }
+
+        public static Functor GetFunctorByName(string name)
+        {
+            return FunctorRepository.GetFunctorByName(name);
         }
 
         public static void AddFunctor(Functor functor)

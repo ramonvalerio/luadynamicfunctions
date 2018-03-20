@@ -1,6 +1,6 @@
 ﻿using NLua;
 
-namespace DynaFunction.Domain.Model
+namespace DynaFunction.Core.Domain.Model
 {
     public class Constant
     {
