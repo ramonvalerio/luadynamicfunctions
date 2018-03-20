@@ -14,33 +14,33 @@ namespace DynaFunction.Tests
         {
             _dynaFunction = new DynaFunction();
             _data = new Data();
+            _data.AddData(DateTime.Now, (double)10);
+            _data.AddData(DateTime.Now, (double)20);
+            _data.AddData(DateTime.Now, (double)30);
 
-            for (int i = 0; i < 1; i++)
-                _data.AddData(DateTime.Now.AddDays(i), (double)10);
-
-            DynaFunction.AddFunctor(new Functor("Bp", "Qo + Qw", _data));
-            DynaFunction.AddFunctor(new Functor("Qo", "x + 1", _data));
-            DynaFunction.AddFunctor(new Functor("Qw", "x * 2", _data));    
+            DynaFunction.AddFunctor(new Functor("A", "B + C", _data));
+            DynaFunction.AddFunctor(new Functor("B", "x + 1", _data));
+            DynaFunction.AddFunctor(new Functor("C", "x * 2", _data));    
         }
 
         [TestMethod]
-        public void Bp()
+        public void A()
         {
-            var valorEsperado = _dynaFunction.Execute(DynaFunction.GetFunctorByName("Bp"));
+            var valorEsperado = _dynaFunction.Execute(DynaFunction.GetFunctorByName("A"));
             Assert.IsTrue(valorEsperado.Y?[0] == 31);
         }
 
         [TestMethod]
-        public void Qo()
+        public void B()
         {
-            var valorEsperado = _dynaFunction.Execute(DynaFunction.GetFunctorByName("Qo"));
+            var valorEsperado = _dynaFunction.Execute(DynaFunction.GetFunctorByName("B"));
             Assert.IsTrue(valorEsperado.Y?[0] == 11);
         }
 
         [TestMethod]
-        public void Qw()
+        public void C()
         {
-            var valorEsperado = _dynaFunction.Execute(DynaFunction.GetFunctorByName("Qw"));
+            var valorEsperado = _dynaFunction.Execute(DynaFunction.GetFunctorByName("C"));
             Assert.IsTrue(valorEsperado.Y?[0] == 20);
         }
     }

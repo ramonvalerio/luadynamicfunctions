@@ -54,7 +54,7 @@ namespace DynaFunction
 
             dynamic[] parameters = new dynamic[_functors.Count];
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var indexParameter = 0;
 
@@ -72,8 +72,10 @@ namespace DynaFunction
                     indexParameter++;
                 }
 
-                var functorExecute = new Functor("Execute", _formula);
-                _lua.DoString(functorExecute.GetScriptFunction(parametersExecuteFunction));
+                _lua.DoString(functor.GetScriptFunction(parametersExecuteFunction));
+
+                //var functorExecute = new Functor("Execute", _formula);
+                //_lua.DoString(functorExecute.GetScriptFunction(parametersExecuteFunction));
 
                 var mainFunction = _lua["Execute"] as LuaFunction;
                 _data.Y.Add(execute(mainFunction, parameters));
